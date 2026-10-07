@@ -54,39 +54,5 @@ migrate:
       "up"
     ]
 
-  # rabbitmq:
-  #   image: rabbitmq:3-management
-  #   container_name: rabbitmq
-  #   ports:
-  #     - "5672:5672"   
-  #     - "15672:15672" 
-  #   environment:
-  #     RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-  #     RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
-  #   healthcheck:
-  #     test: ["CMD", "rabbitmqctl", "status"]
-  #     interval: 5s
-  #     timeout: 5s
-  #     retries: 5
-  #   restart: unless-stopped
-
-  # email-worker:
-  #   build:
-  #     context: .
-  #     args:
-  #       SERVICE: warehouse_email-worker
-  #   container_name: warehouse_email-worker
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #     rabbitmq:
-  #       condition: service_healthy
-  #   volumes:
-  #     - /etc/localtime:/etc/localtime:ro
-  #     - /etc/timezone:/etc/timezone:ro
-  #   restart: unless-stopped
-  
 volumes:
   postgres_data:
