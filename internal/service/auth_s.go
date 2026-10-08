@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/marisasha/warehouse-helper/internal/dto"
+	dto "github.com/marisasha/warehouse-helper/internal/dto/request"
 	"github.com/marisasha/warehouse-helper/internal/repository"
 )
 
@@ -29,7 +29,6 @@ const (
 	salt       = "vfzgz25f2sdf4gsf.fsg246ydhd.gh3ilof10"
 	signingKey = "fnhj52..254nfslmnl8hfsvbnjs.2fjisg"
 	tokenTTL   = 12 * time.Hour
-	queueName  = "email_verification"
 )
 
 func NewAuthService(repos repository.Authorization) *AuthService {
@@ -43,8 +42,8 @@ func (s *AuthService) CreateUser(user *dto.User) error {
 	return s.repos.CreateUser(user)
 }
 
-func (s *AuthService) GenerateToken(username, password *string) (string, error) {
-	user, err := s.repos.GetUser(username, generatePasswordHash(*password))
+func (s *AuthService) GenerateToken(username, password string) (string, error) {
+	user, err := s.repos.GetUser(username, *generatePasswordHash(password))
 	if err != nil {
 		return "", err
 	}
