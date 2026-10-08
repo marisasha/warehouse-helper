@@ -17,7 +17,7 @@ type App struct {
 }
 
 func NewApp(cfg repository.Config) (*App, error) {
-	db, err := repository.NewMySQLDB(cfg)
+	db, err := repository.NewSQLDB(cfg)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,6 @@ func NewApp(cfg repository.Config) (*App, error) {
 	handlers := handler.NewHandler(services)
 
 	server := new(httpserver.Server)
-	services.EmailScheduler.StartScheduler()
 
 	return &App{
 		server:   server,
@@ -44,5 +43,11 @@ func (a *App) Shutdown(ctx context.Context) error {
 	if err := a.server.Shutdown(ctx); err != nil {
 		return err
 	}
-	return a.db.Close()
+
+	sqlDB, err := a.db.DB()
+	if err != nil {
+		return err
+	}
+
+	return sqlDB.Close()
 }
