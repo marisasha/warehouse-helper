@@ -3,12 +3,12 @@ package dto
 import "time"
 
 type User struct {
-	ID        int       `json:"-" db:"id"`
-	Email     string    `json:"email" db:"email" binding:"required"`
-	Password  string    `json:"password" db:"password_hash" binding:"required"`
-	FirstName string    `json:"first_name" db:"first_name" binding:"required"`
-	LastName  string    `json:"last_name" db:"last_name" binding:"required"`
-	CreatedAt time.Time `json:"registered_date" db:"registered_date"`
+	ID        int       `json:"-"`
+	Email     string    `json:"email" gorm:"column:email" binding:"required"`
+	Password  string    `json:"password" gorm:"column:password_hash" binding:"required"`
+	FirstName string    `json:"first_name" gorm:"column:first_name" binding:"required"`
+	LastName  string    `json:"last_name" gorm:"column:last_name" binding:"required"`
+	CreatedAt time.Time `json:"-"`
 }
 
 type UserSignInRequest struct {
