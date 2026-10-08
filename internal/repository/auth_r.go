@@ -7,19 +7,19 @@ import (
 	"gorm.io/gorm"
 )
 
-type AuthPostgres struct {
+type AuthDB struct {
 	db *gorm.DB
 }
 
-func NewAuthPostgres(db *gorm.DB) *AuthPostgres {
-	return &AuthPostgres{db: db}
+func NewAuthDB(db *gorm.DB) *AuthDB {
+	return &AuthDB{db: db}
 }
 
-func (r *AuthPostgres) CreateUser(user *dto.User) error {
+func (r *AuthDB) CreateUser(user *dto.User) error {
 	return r.db.Create(user).Error
 }
 
-func (r *AuthPostgres) GetUser(email, passwordHash string) (dto.User, error) {
+func (r *AuthDB) GetUser(email, passwordHash string) (dto.User, error) {
 	var user dto.User
 
 	err := r.db.
