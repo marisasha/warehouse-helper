@@ -13,7 +13,7 @@ import (
 // @ID sign-up
 // @Accept json
 // @Produce json
-// @Param input body models.User true "Данные пользователя"
+// @Param input body dto.User true "Данные пользователя"
 // @Router /auth/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {
 	var input dto.User
@@ -41,7 +41,7 @@ func (h *Handler) signUp(c *gin.Context) {
 // @ID sign-in
 // @Accept json
 // @Produce json
-// @Param input body models.UserSignInRequest true "Данные пользователя"
+// @Param input body dto.UserSignInRequest true "Данные пользователя"
 // @Router /auth/sign-in [post]
 func (h *Handler) signIn(c *gin.Context) {
 	var input dto.UserSignInRequest
@@ -51,7 +51,7 @@ func (h *Handler) signIn(c *gin.Context) {
 		return
 	}
 
-	token, err := h.services.Authorization.GenerateToken(&input.Email, &input.Password)
+	token, err := h.services.Authorization.GenerateToken(input.Email, input.Password)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
