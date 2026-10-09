@@ -7,7 +7,7 @@ import (
 
 type Authorization interface {
 	CreateUser(user *dto.User) error
-	GetUser(email, passwordHash string) (dto.User, error)
+	GetUser(email string) (int, string, error)
 }
 
 type Repository struct {
