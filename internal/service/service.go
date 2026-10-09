@@ -15,8 +15,8 @@ type Service struct {
 	Authorization
 }
 
-func NewService(repos *repository.Repository) *Service {
+func NewService(repos *repository.Repository, cfg Argon2id) *Service {
 	return &Service{
-		Authorization: NewAuthService(repos.Authorization),
+		Authorization: NewAuthService(repos.Authorization, cfg),
 	}
 }
