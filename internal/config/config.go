@@ -4,13 +4,15 @@ import (
 	"fmt"
 
 	"github.com/marisasha/warehouse-helper/internal/repository"
+	"github.com/marisasha/warehouse-helper/internal/service"
 
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	AppPort string            `mapstructure:"port"`
-	DB      repository.Config `mapstructure:"db"`
+	AppPort  string            `mapstructure:"port"`
+	DB       repository.Config `mapstructure:"db"`
+	Argon2id service.Argon2id  `mapstructure:"argon"`
 }
 
 func Load() (*Config, error) {

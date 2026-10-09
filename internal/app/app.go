@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 
+	"github.com/marisasha/warehouse-helper/internal/config"
 	"github.com/marisasha/warehouse-helper/internal/handler"
 	"github.com/marisasha/warehouse-helper/internal/repository"
 	"github.com/marisasha/warehouse-helper/internal/service"
@@ -16,14 +17,14 @@ type App struct {
 	db       *gorm.DB
 }
 
-func NewApp(cfg repository.Config) (*App, error) {
-	db, err := repository.NewSQLDB(cfg)
+func NewApp(cfg *config.Config) (*App, error) {
+	db, err := repository.NewSQLDB(cfg.DB)
 	if err != nil {
 		return nil, err
 	}
 
 	repos := repository.NewRepository(db)
-	services := service.NewService(repos)
+	services := service.NewService(repos, cfg.Argon2id)
 	handlers := handler.NewHandler(services)
 
 	server := new(httpserver.Server)
