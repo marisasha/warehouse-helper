@@ -18,7 +18,7 @@ func main() {
 		logrus.Fatalf("cannot load config: %s", err)
 	}
 
-	application, err := app.NewApp(cfg.DB)
+	application, err := app.NewApp(cfg)
 	if err != nil {
 		logrus.Fatalf("failed to initialize app: %s", err.Error())
 	}
