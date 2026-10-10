@@ -1,7 +1,11 @@
 package repository
 
 import (
-	dto "github.com/marisasha/warehouse-helper/internal/dto/request"
+	"errors"
+	"fmt"
+
+	req "github.com/marisasha/warehouse-helper/internal/dto/request"
+	res "github.com/marisasha/warehouse-helper/internal/dto/response"
 	"gorm.io/gorm"
 )
 
@@ -13,15 +17,25 @@ func NewAuthDB(db *gorm.DB) *AuthDB {
 	return &AuthDB{db: db}
 }
 
-func (r *AuthDB) CreateUser(user *dto.User) error {
-	return r.db.Create(user).Error
+func (r *AuthDB) CreateUser(user *req.User) error {
+	err := r.db.
+		Table(usersTable).
+		Create(user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return fmt.Errorf("Пользователь с email %s уже существует", user.Email)
+		}
+		return err
+	}
+	return nil
+
 }
 
-func (r *AuthDB) GetUser(email string) (int, string, error) {
-	var user dto.User
+func (r *AuthDB) GetUser(email string) (uint64, string, error) {
+	var user res.UserResponse
 
 	err := r.db.
-		Table(userTable).
+		Table(usersTable).
 		Where("email = ?", email).
 		First(&user).Error
 
