@@ -3,14 +3,14 @@ package repository
 import (
 	"fmt"
 
-	"github.com/marisasha/warehouse-helper/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
 const (
-	userTable = "users"
+	usersTable      = "users"
+	warehousesTable = "warehouses"
 )
 
 type Config struct {
@@ -29,13 +29,10 @@ func NewSQLDB(cfg Config) (*gorm.DB, error) {
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Error),
+		Logger:         logger.Default.LogMode(logger.Error),
+		TranslateError: true,
 	})
 	if err != nil {
-		return nil, err
-	}
-
-	if err := db.AutoMigrate(&models.User{}); err != nil {
 		return nil, err
 	}
 
