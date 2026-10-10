@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	dto "github.com/marisasha/warehouse-helper/internal/dto/request"
+	res "github.com/marisasha/warehouse-helper/internal/dto/request"
 )
 
 // @Summary Регистрация пользователя
@@ -13,10 +13,10 @@ import (
 // @ID sign-up
 // @Accept json
 // @Produce json
-// @Param input body dto.User true "Данные пользователя"
+// @Param input body request.User true "Данные пользователя"
 // @Router /auth/sign-up [post]
 func (h *Handler) signUp(c *gin.Context) {
-	var input dto.User
+	var input res.User
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -41,10 +41,10 @@ func (h *Handler) signUp(c *gin.Context) {
 // @ID sign-in
 // @Accept json
 // @Produce json
-// @Param input body dto.UserSignInRequest true "Данные пользователя"
+// @Param input body request.UserSignIn true "Данные пользователя"
 // @Router /auth/sign-in [post]
 func (h *Handler) signIn(c *gin.Context) {
-	var input dto.UserSignInRequest
+	var input res.UserSignIn
 
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
