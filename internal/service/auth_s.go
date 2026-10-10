@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	dto "github.com/marisasha/warehouse-helper/internal/dto/request"
+	req "github.com/marisasha/warehouse-helper/internal/dto/request"
 	"github.com/marisasha/warehouse-helper/internal/repository"
 	"golang.org/x/crypto/argon2"
 )
@@ -44,7 +44,7 @@ func NewAuthService(repos repository.Authorization, cfg Argon2id) *AuthService {
 	}
 }
 
-func (s *AuthService) CreateUser(user *dto.User) error {
+func (s *AuthService) CreateUser(user *req.User) error {
 	hashedPassword, err := s.generateArgon2Hash(user.Password)
 	if err != nil {
 		return err
@@ -68,7 +68,7 @@ func (s *AuthService) GenerateToken(username, password string) (string, error) {
 			ExpiresAt: time.Now().Add(tokenTTL).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		userId,
+		int(userId),
 	})
 
 	return token.SignedString([]byte(s.cfg.SigningKey))
