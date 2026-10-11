@@ -7,6 +7,10 @@ import (
 	res "github.com/marisasha/warehouse-helper/internal/dto/request"
 )
 
+type getUserID struct {
+	Data map[string]uint64 `json:"data"`
+}
+
 // @Summary Регистрация пользователя
 // @Tags auth
 // @Description Создание нового пользователя
@@ -23,14 +27,17 @@ func (h *Handler) signUp(c *gin.Context) {
 		return
 	}
 
-	err := h.services.Authorization.CreateUser(&input)
+	userID, err := h.services.Authorization.CreateUser(&input)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, map[string]string{
-		"message": "account sucsuccessfully created",
+	data := map[string]uint64{
+		"userID": userID,
+	}
+	c.JSON(http.StatusCreated, getUserID{
+		Data: data,
 	})
 
 }
