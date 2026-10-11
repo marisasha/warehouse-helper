@@ -44,13 +44,19 @@ func NewAuthService(repos repository.Authorization, cfg Argon2id) *AuthService {
 	}
 }
 
-func (s *AuthService) CreateUser(user *req.User) error {
+func (s *AuthService) CreateUser(user *req.User) (uint64, error) {
 	hashedPassword, err := s.generateArgon2Hash(user.Password)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	user.Password = hashedPassword
-	return s.repos.CreateUser(user)
+
+	userID, err := s.repos.CreateUser(user)
+	if err != nil {
+		return 0, err
+	}
+
+	return userID, nil
 }
 
 func (s *AuthService) GenerateToken(username, password string) (string, error) {

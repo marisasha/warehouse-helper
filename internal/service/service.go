@@ -8,12 +8,13 @@ import (
 )
 
 type Authorization interface {
-	CreateUser(user *req.User) error
+	CreateUser(user *req.User) (uint64, error)
 	GenerateToken(username, password string) (string, error)
 	ParseToken(token *string) (int, error)
 }
 type Warehouse interface {
-	GetWarehouseDetail(warehouseId *uuid.UUID) (*models.Warehouse, error)
+	GetWarehouseDetail(warehouseID *uuid.UUID) (*models.Warehouse, error)
+	CreateWarhouseEmployee(input *req.WarehouseEmployee) (uuid.UUID, error)
 }
 
 type Service struct {
