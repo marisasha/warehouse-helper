@@ -1,6 +1,7 @@
 package request
 
 type User struct {
+	ID        uint64 `json:"-"`
 	Email     string `json:"email"  binding:"required"`
 	Password  string `json:"password" gorm:"column:password_hash" binding:"required"`
 	FirstName string `json:"first_name" binding:"required"`
