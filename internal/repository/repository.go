@@ -8,12 +8,13 @@ import (
 )
 
 type Authorization interface {
-	CreateUser(user *req.User) error
+	CreateUser(user *req.User) (uint64, error)
 	GetUser(email string) (uint64, string, error)
 }
 
 type Warehouse interface {
 	GetWarehouseDetail(warehouseID *uuid.UUID) (*models.Warehouse, error)
+	CreateWarhouseEmployee(input *req.WarehouseEmployee) (uuid.UUID, error)
 }
 
 type Repository struct {

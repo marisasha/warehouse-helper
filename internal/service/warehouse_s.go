@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/google/uuid"
+	req "github.com/marisasha/warehouse-helper/internal/dto/request"
 	"github.com/marisasha/warehouse-helper/internal/models"
 	"github.com/marisasha/warehouse-helper/internal/repository"
 )
@@ -26,4 +27,13 @@ func (s *WarehouseService) GetWarehouseDetail(warehouseID *uuid.UUID) (*models.W
 
 	return warehouse, nil
 
+}
+
+func (s *WarehouseService) CreateWarhouseEmployee(input *req.WarehouseEmployee) (uuid.UUID, error) {
+	warehouseEmployeeID, err := s.repos.CreateWarhouseEmployee(input)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return warehouseEmployeeID, nil
 }
