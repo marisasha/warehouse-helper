@@ -8,7 +8,7 @@ import (
 )
 
 type WarehouseEmployee struct {
-	WarehouseID uuid.UUID           `json:"warehouse_id"`
+	WarehouseID uuid.UUID           `json:"-"`
 	UserID      uint                `json:"user_id"`
 	Role        models.EmployeeRole `json:"role"`
 	HiredAt     *time.Time          `json:"hired_at,omitempty"`
