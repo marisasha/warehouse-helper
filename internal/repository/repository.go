@@ -15,6 +15,9 @@ type Authorization interface {
 type Warehouse interface {
 	GetWarehouseDetail(warehouseID *uuid.UUID) (*models.Warehouse, error)
 	CreateWarhouseEmployee(input *req.WarehouseEmployee) (uuid.UUID, error)
+	GetWarehouseEpmloyees(warehouseID uuid.UUID) ([]*models.WarehouseEmployee, error)
+	GetWarehouseEmployee(warehouseID, employeeID uuid.UUID) (*models.WarehouseEmployee, error)
+	DeleteWarehouseEmployee(warehouseID, employeeID uuid.UUID) error
 }
 
 type Repository struct {

@@ -37,3 +37,27 @@ func (s *WarehouseService) CreateWarhouseEmployee(input *req.WarehouseEmployee) 
 
 	return warehouseEmployeeID, nil
 }
+
+func (s *WarehouseService) GetWarehouseEpmloyees(warehouseID uuid.UUID) ([]*models.WarehouseEmployee, error) {
+	warehouseEmployees, err := s.repos.GetWarehouseEpmloyees(warehouseID)
+	if err != nil {
+		return nil, err
+	}
+	return warehouseEmployees, nil
+}
+
+func (s *WarehouseService) GetWarehouseEmployee(warehouseID, employeeID uuid.UUID) (*models.WarehouseEmployee, error) {
+	warehouseEmployee, err := s.repos.GetWarehouseEmployee(warehouseID, employeeID)
+	if err != nil {
+		return nil, err
+	}
+	return warehouseEmployee, nil
+}
+
+func (s *WarehouseService) DeleteWarehouseEmployee(warehouseID, employeeID uuid.UUID) error {
+	err := s.repos.DeleteWarehouseEmployee(warehouseID, employeeID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
