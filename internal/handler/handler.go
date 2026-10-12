@@ -31,50 +31,50 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	apiV1 := router.Group("/api/v1")
 	{
 		wareHouse := apiV1.Group("/warehouse")
-		wareHouse.GET("/by-id/:id", h.getWarehouseDetail)
-		wareHouseEmployee := wareHouse.Group("/employee")
+		wareHouse.GET("/:warehouseID", h.getWarehouseDetail)
+		wareHouseEmployee := wareHouse.Group("/:warehouseID/employee")
 		{
-			wareHouseEmployee.POST("/", h.createWarehouseEmployee)
-			wareHouseEmployee.GET("/")
-			wareHouseEmployee.GET("/:id")
-			wareHouseEmployee.DELETE("/:id")
+			wareHouseEmployee.POST("/", h.getWarehouseEmployees)
+			wareHouseEmployee.GET("/", h.getWarehouseEmployees)
+			wareHouseEmployee.GET("/:employeeID", h.getWarehouseEmployee)
+			wareHouseEmployee.DELETE("/:employeeID", h.deleteWarehouseEmployee)
 		}
-		productCategorie := wareHouse.Group("/categorie")
+		productCategorie := wareHouse.Group("/:warehouseID/categorie")
 		{
 			productCategorie.POST("/")
 			productCategorie.GET("/")
-			productCategorie.GET("/:id")
-			productCategorie.DELETE("/:id")
+			productCategorie.GET("/:categorieID")
+			productCategorie.DELETE("/:categorieID")
 		}
-		product := wareHouse.Group("/product")
+		product := wareHouse.Group("/:warehouseID/product")
 		{
 			product.POST("/")
 			product.GET("/")
-			product.GET("/by-id/:id")
-			product.DELETE("/by-id/:id")
-			productBatch := product.Group("/batch")
+			product.GET("/:productID")
+			product.DELETE("/:productID")
+			productBatch := product.Group("/:productID/batch")
 			{
 				productBatch.POST("/")
 				productBatch.GET("/")
-				productBatch.GET("/:id")
+				productBatch.GET("/:batchID")
 			}
 		}
 	}
 	supplier := apiV1.Group("/supplier")
 	{
-		supplier.GET("/:id")
+		supplier.GET("/:supplierID")
 	}
 	supply := apiV1.Group("/supply")
 	{
 		supply.POST("/")
 		supply.GET("/")
-		supply.GET("/:id")
+		supply.GET("/:supplyID")
 	}
 	order := apiV1.Group("/order")
 	{
 		order.POST("/")
 		order.GET("/")
-		order.GET("/:id")
+		order.GET("/:orderID")
 	}
 
 	return router
