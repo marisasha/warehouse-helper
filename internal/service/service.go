@@ -20,14 +20,23 @@ type Warehouse interface {
 	DeleteWarehouseEmployee(warehouseID, employeeID uuid.UUID) error
 }
 
+type Product interface {
+	CreateProductCategory(input *req.ProductCategory) (uuid.UUID, error)
+	GetProductCategories(warehouseID uuid.UUID) ([]*models.ProductCategory, error)
+	GetProductCategory(warehouseID, categoryID uuid.UUID) (*models.ProductCategory, error)
+	DeleteProductCategory(warehouseID, categoryID uuid.UUID) error
+}
+
 type Service struct {
 	Authorization
 	Warehouse
+	Product
 }
 
 func NewService(repos *repository.Repository, cfg Argon2id) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos.Authorization, cfg),
-		Warehouse:     NewWarehouseService(repos.Warehouse, cfg),
+		Warehouse:     NewWarehouseService(repos.Warehouse),
+		Product:       NewProductService(repos),
 	}
 }

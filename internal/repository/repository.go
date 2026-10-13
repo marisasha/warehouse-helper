@@ -20,14 +20,23 @@ type Warehouse interface {
 	DeleteWarehouseEmployee(warehouseID, employeeID uuid.UUID) error
 }
 
+type Product interface {
+	CreateProductCategory(input *req.ProductCategory) (uuid.UUID, error)
+	GetProductCategories(warehouseID uuid.UUID) ([]*models.ProductCategory, error)
+	GetProductCategory(warehouseID, categoryID uuid.UUID) (*models.ProductCategory, error)
+	DeleteProductCategory(warehouseID, categoryID uuid.UUID) error
+}
+
 type Repository struct {
 	Authorization
 	Warehouse
+	Product
 }
 
 func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthDB(db),
 		Warehouse:     NewWarehouseDB(db),
+		Product:       NewProductDB(db),
 	}
 }

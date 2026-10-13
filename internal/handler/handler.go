@@ -41,10 +41,10 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		}
 		productCategorie := wareHouse.Group("/:warehouseID/categorie")
 		{
-			productCategorie.POST("/")
-			productCategorie.GET("/")
-			productCategorie.GET("/:categorieID")
-			productCategorie.DELETE("/:categorieID")
+			productCategorie.POST("/", h.createProductCategory)
+			productCategorie.GET("/", h.getProductCategories)
+			productCategorie.GET("/:categorieID", h.getProductCategory)
+			productCategorie.DELETE("/:categorieID", h.deleteProductCategory)
 		}
 		product := wareHouse.Group("/:warehouseID/product")
 		{
