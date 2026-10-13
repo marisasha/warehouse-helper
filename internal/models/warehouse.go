@@ -30,8 +30,8 @@ type Warehouse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 
 	// Связи
-	Employees []WarehouseEmployee `gorm:"foreignKey:WarehouseID" json:"-"`
-	Products  []Product           `gorm:"foreignKey:WarehouseID" json:"-"`
+	Employees         []WarehouseEmployee `gorm:"foreignKey:WarehouseID" json:"-"`
+	ProductCategories []ProductCategory   `gorm:"foreignKey:WarehouseID" json:"-"`
 }
 
 type WarehouseEmployee struct {
