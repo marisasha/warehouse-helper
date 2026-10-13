@@ -7,9 +7,15 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+type ProductCategoryType string
 type ProductUnit string
 type BatchStatus string
 
+const (
+	TypeVegetables ProductCategoryType = "vegetables"
+	TypeFruits     ProductCategoryType = "fruits"
+	TypeBerries    ProductCategoryType = "berries"
+)
 const (
 	UnitKg    ProductUnit = "kg"
 	UnitPcs   ProductUnit = "pcs"
@@ -23,17 +29,18 @@ const (
 )
 
 type ProductCategory struct {
-	ID   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
-	Type string    `json:"type"`
+	ID          uuid.UUID           `json:"id"`
+	WarehouseID uuid.UUID           `json:"warehouse_id"`
+	Name        string              `json:"name"`
+	Type        ProductCategoryType `json:"type"`
 
-	Products []Product `gorm:"foreignKey:CategoryID" json:"-"`
+	Products  []Product `gorm:"foreignKey:CategoryID" json:"-"`
+	Warehouse Warehouse `gorm:"foreignKey:WarehouseID" json:"-"`
 }
 
 type Product struct {
 	ID           uuid.UUID   `json:"id"`
 	CategoryID   uuid.UUID   `json:"category_id"`
-	WarehouseID  uuid.UUID   `json:"warehouse_id"`
 	SKU          string      `json:"sku"`
 	Name         string      `json:"name"`
 	Unit         ProductUnit `json:"unit"`
@@ -45,9 +52,8 @@ type Product struct {
 	UpdatedAt    time.Time   `json:"updated_at"`
 
 	// Связи
-	Warehouse Warehouse       `gorm:"foreignKey:WarehouseID" json:"-"`
-	Category  ProductCategory `gorm:"foreignKey:CategoryID" json:"category"`
-	Batches   []Batch         `gorm:"foreignKey:ProductID" json:"-"`
+	Category ProductCategory `gorm:"foreignKey:CategoryID" json:"category"`
+	Batches  []Batch         `gorm:"foreignKey:ProductID" json:"-"`
 }
 
 type Batch struct {
