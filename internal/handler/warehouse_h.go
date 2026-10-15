@@ -15,12 +15,12 @@ type getWarehouseDetailResponse struct {
 
 // @Summary Просмотр склада
 // @Tags warehouse
-// @Description Просмотр атрибутов склада по его id
+// @Description Просмотр атрибутов склада по его ID
 // @Accept json
 // @Produce json
 // @Param warehouseID path string true "Warehouse ID"
 // @Security ApiKeyAuth
-// @Router /api/v1/warehouse/{warehouseID} [get]
+// @Router /api/v1/warehouse/{warehouseID}/ [get]
 func (h *Handler) getWarehouseDetail(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
@@ -52,7 +52,7 @@ type createWarehouseEmployeeResponse struct {
 // @Param warehouseID path string true "Warehouse ID"
 // @Param input body request.WarehouseEmployee true "Данные пользователя"
 // @Security ApiKeyAuth
-// @Router /api/v1/warehouse/{warehouseID}/employee [post]
+// @Router /api/v1/warehouse/{warehouseID}/employee/ [post]
 func (h *Handler) createWarehouseEmployee(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
@@ -89,12 +89,12 @@ type getWarehouseEmployeesResponse struct {
 
 // @Summary Просмотр работников склада
 // @Tags warehouse
-// @Description Просмотр всех работников по id склада
+// @Description Просмотр всех работников по ID склада
 // @Accept json
 // @Produce json
 // @Param warehouseID path string true "Warehouse ID"
 // @Security ApiKeyAuth
-// @Router /api/v1/warehouse/{warehouseID}/employee [get]
+// @Router /api/v1/warehouse/{warehouseID}/employee/ [get]
 func (h *Handler) getWarehouseEmployees(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
@@ -119,7 +119,7 @@ type getWarehouseEmployeeResponse struct {
 
 // @Summary Просмотр сотрудника склада
 // @Tags warehouse
-// @Description Просмотр сотрудника склада по id склада и id сотрудника
+// @Description Просмотр сотрудника склада по ID склада и ID сотрудника
 // @Accept json
 // @Produce json
 // @Param warehouseID path string true "Warehouse ID"
@@ -152,7 +152,7 @@ func (h *Handler) getWarehouseEmployee(c *gin.Context) {
 
 // @Summary Просмотр сотрудника склада
 // @Tags warehouse
-// @Description Просмотр сотрудника склада по id склада и id сотрудника
+// @Description Просмотр сотрудника склада по ID склада и ID сотрудника
 // @Accept json
 // @Produce json
 // @Param warehouseID path string true "Warehouse ID"
