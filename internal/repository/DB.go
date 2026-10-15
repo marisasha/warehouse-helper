@@ -13,6 +13,7 @@ const (
 	warehousesTable         = "warehouses"
 	warehouseEmployeesTable = "warehouse_employees"
 	productCategoriesTable  = "product_categories"
+	productTable            = "products"
 )
 
 type Config struct {
