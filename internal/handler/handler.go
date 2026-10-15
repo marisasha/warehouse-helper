@@ -34,23 +34,23 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		wareHouse.GET("/:warehouseID", h.getWarehouseDetail)
 		wareHouseEmployee := wareHouse.Group("/:warehouseID/employee")
 		{
-			wareHouseEmployee.POST("/", h.getWarehouseEmployees)
+			wareHouseEmployee.POST("/", h.createWarehouseEmployee)
 			wareHouseEmployee.GET("/", h.getWarehouseEmployees)
 			wareHouseEmployee.GET("/:employeeID", h.getWarehouseEmployee)
 			wareHouseEmployee.DELETE("/:employeeID", h.deleteWarehouseEmployee)
 		}
-		productCategorie := wareHouse.Group("/:warehouseID/categorie")
+		productCategorie := wareHouse.Group("/:warehouseID/category")
 		{
 			productCategorie.POST("/", h.createProductCategory)
 			productCategorie.GET("/", h.getProductCategories)
-			productCategorie.GET("/:categorieID", h.getProductCategory)
-			productCategorie.DELETE("/:categorieID", h.deleteProductCategory)
-			product := wareHouse.Group("/:categorieID/product")
+			productCategorie.GET("/:categoryID", h.getProductCategory)
+			productCategorie.DELETE("/:categoryID", h.deleteProductCategory)
+			product := productCategorie.Group("/:categoryID/product")
 			{
-				product.POST("/")
-				product.GET("/")
-				product.GET("/:productID")
-				product.DELETE("/:productID")
+				product.POST("/", h.createProduct)
+				product.GET("/", h.getProducts)
+				product.GET("/:productID", h.getProduct)
+				product.DELETE("/:productID", h.deleteProduct)
 				productBatch := product.Group("/:productID/batch")
 				{
 					productBatch.POST("/")
