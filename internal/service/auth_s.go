@@ -6,6 +6,8 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"net/mail"
+	"regexp"
 	"strings"
 	"time"
 
@@ -44,7 +46,35 @@ func NewAuthService(repos repository.Authorization, cfg Argon2id) *AuthService {
 	}
 }
 
+var (
+	phoneRe    = regexp.MustCompile(`^\+79\d{9}$`)
+	passwordRe = regexp.MustCompile(`^[A-Za-z\d!@#$%^&*()_\-+=\[\]{};:'",.<>/?\\|~\x60]{8,64}$`)
+)
+
+func isValidEmail(email string) bool {
+	addr, err := mail.ParseAddress(email)
+	return err == nil && addr.Address == email
+}
+
+func isValidNumber(phone string) bool {
+	return phoneRe.MatchString(phone)
+}
+
+func isValidPassword(password string) bool {
+	return passwordRe.MatchString(password)
+}
+
 func (s *AuthService) CreateUser(user *req.User) (uint64, error) {
+	if !isValidEmail(user.Email) {
+		return 0, errors.New("Непрвильный формат email")
+	}
+	if !isValidNumber(user.Phone) {
+		return 0, errors.New("Неправильный формат номера")
+	}
+	if !isValidPassword(user.Password) {
+		return 0, errors.New("Пароль не соответствует требованиям")
+	}
+
 	hashedPassword, err := s.generateArgon2Hash(user.Password)
 	if err != nil {
 		return 0, err
