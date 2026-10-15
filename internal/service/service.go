@@ -14,6 +14,7 @@ type Authorization interface {
 }
 type Warehouse interface {
 	GetWarehouseDetail(warehouseID *uuid.UUID) (*models.Warehouse, error)
+
 	CreateWarhouseEmployee(input *req.WarehouseEmployee) (uuid.UUID, error)
 	GetWarehouseEpmloyees(warehouseID uuid.UUID) ([]*models.WarehouseEmployee, error)
 	GetWarehouseEmployee(warehouseID, employeeID uuid.UUID) (*models.WarehouseEmployee, error)
@@ -25,6 +26,11 @@ type Product interface {
 	GetProductCategories(warehouseID uuid.UUID) ([]*models.ProductCategory, error)
 	GetProductCategory(warehouseID, categoryID uuid.UUID) (*models.ProductCategory, error)
 	DeleteProductCategory(warehouseID, categoryID uuid.UUID) error
+
+	CreateProduct(input *req.Product) (uuid.UUID, error)
+	GetProductsByCategory(warehouseID, categoryID uuid.UUID) ([]*models.Product, error)
+	GetProduct(warehouseID, categoryID, productID uuid.UUID) (*models.Product, error)
+	DeleteProduct(warehouseID, categoryID, productID uuid.UUID) error
 }
 
 type Service struct {

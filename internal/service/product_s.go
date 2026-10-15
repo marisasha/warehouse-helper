@@ -32,3 +32,19 @@ func (s *ProductService) GetProductCategory(warehouseID, categoryID uuid.UUID) (
 func (s *ProductService) DeleteProductCategory(warehouseID, categoryID uuid.UUID) error {
 	return s.repos.DeleteProductCategory(warehouseID, categoryID)
 }
+
+func (s *ProductService) CreateProduct(input *req.Product) (uuid.UUID, error) {
+	return s.repos.CreateProduct(input)
+}
+
+func (s *ProductService) GetProductsByCategory(warehouseID, categoryID uuid.UUID) ([]*models.Product, error) {
+	return s.repos.GetProductsByCategory(warehouseID, categoryID)
+}
+
+func (s *ProductService) GetProduct(warehouseID, categoryID, productID uuid.UUID) (*models.Product, error) {
+	return s.repos.GetProduct(warehouseID, categoryID, productID)
+}
+
+func (s *ProductService) DeleteProduct(warehouseID, categoryID, productID uuid.UUID) error {
+	return s.repos.DeleteProduct(warehouseID, categoryID, productID)
+}
