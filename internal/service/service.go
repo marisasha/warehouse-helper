@@ -14,7 +14,6 @@ type Authorization interface {
 }
 type Warehouse interface {
 	GetWarehouseDetail(warehouseID *uuid.UUID) (*models.Warehouse, error)
-
 	CreateWarhouseEmployee(input *req.WarehouseEmployee) (uuid.UUID, error)
 	GetWarehouseEpmloyees(warehouseID uuid.UUID) ([]*models.WarehouseEmployee, error)
 	GetWarehouseEmployee(warehouseID, employeeID uuid.UUID) (*models.WarehouseEmployee, error)
@@ -27,16 +26,23 @@ type Product interface {
 	GetProductCategory(warehouseID, categoryID uuid.UUID) (*models.ProductCategory, error)
 	DeleteProductCategory(warehouseID, categoryID uuid.UUID) error
 
-	CreateProduct(input *req.Product) (uuid.UUID, error)
+	CreateProduct(input *req.Product, warehouseID uuid.UUID) (uuid.UUID, error)
 	GetProductsByCategory(warehouseID, categoryID uuid.UUID) ([]*models.Product, error)
 	GetProduct(warehouseID, categoryID, productID uuid.UUID) (*models.Product, error)
 	DeleteProduct(warehouseID, categoryID, productID uuid.UUID) error
 }
 
+type Supply interface {
+	CreateSupplier(input *req.Supplier) (uuid.UUID, error)
+	GetSuppliers(warehouseID uuid.UUID) ([]*models.Supplier, error)
+	GetSupplier(warehouseID, supplierID uuid.UUID) (*models.Supplier, error)
+	DeleteSupplier(warehouseID, supplierID uuid.UUID) error
+}
 type Service struct {
 	Authorization
 	Warehouse
 	Product
+	Supply
 }
 
 func NewService(repos *repository.Repository, cfg Argon2id) *Service {
@@ -44,5 +50,6 @@ func NewService(repos *repository.Repository, cfg Argon2id) *Service {
 		Authorization: NewAuthService(repos.Authorization, cfg),
 		Warehouse:     NewWarehouseService(repos.Warehouse),
 		Product:       NewProductService(repos),
+		Supply:        NewSupplyService(repos),
 	}
 }

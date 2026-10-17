@@ -23,19 +23,26 @@ type Warehouse interface {
 type Product interface {
 	CreateProductCategory(input *req.ProductCategory) (uuid.UUID, error)
 	GetProductCategories(warehouseID uuid.UUID) ([]*models.ProductCategory, error)
-	GetProductCategory(warehouseID, categoryID uuid.UUID) (*models.ProductCategory, error)
+	GetProductCategoryData(warehouseID, categoryID uuid.UUID) (*models.ProductCategory, error)
+	GetProductCategoryExist(warehouseID, categoryID uuid.UUID) (bool, error)
 	DeleteProductCategory(warehouseID, categoryID uuid.UUID) error
 
 	CreateProduct(input *req.Product) (uuid.UUID, error)
-	GetProductsByCategory(warehouseID, categoryID uuid.UUID) ([]*models.Product, error)
-	GetProduct(warehouseID, categoryID, productID uuid.UUID) (*models.Product, error)
-	DeleteProduct(warehouseID, categoryID, productID uuid.UUID) error
+	GetProductsByCategory(categoryID uuid.UUID) ([]*models.Product, error)
+	GetProduct(categoryID, productID uuid.UUID) (*models.Product, error)
+	DeleteProduct(categoryID, productID uuid.UUID) error
 }
-
+type Supply interface {
+	CreateSupplier(input *req.Supplier) (uuid.UUID, error)
+	GetSuppliers(warehouseID uuid.UUID) ([]*models.Supplier, error)
+	GetSupplier(warehouseID, supplierID uuid.UUID) (*models.Supplier, error)
+	DeleteSupplier(warehouseID, supplierID uuid.UUID) error
+}
 type Repository struct {
 	Authorization
 	Warehouse
 	Product
+	Supply
 }
 
 func NewRepository(db *gorm.DB) *Repository {
@@ -43,5 +50,6 @@ func NewRepository(db *gorm.DB) *Repository {
 		Authorization: NewAuthDB(db),
 		Warehouse:     NewWarehouseDB(db),
 		Product:       NewProductDB(db),
+		Supply:        NewSupplyDB(db),
 	}
 }
