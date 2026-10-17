@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	req "github.com/marisasha/warehouse-helper/internal/dto/request"
 	"github.com/marisasha/warehouse-helper/internal/models"
-	"github.com/sirupsen/logrus"
 )
 
 type createProductCategoryResponse struct {
@@ -26,7 +25,7 @@ type createProductCategoryResponse struct {
 func (h *Handler) createProductCategory(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid warehouse id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
 		return
 	}
 
@@ -67,7 +66,7 @@ type getProductCategoriesResponse struct {
 func (h *Handler) getProductCategories(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid warehouse id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
 		return
 	}
 
@@ -98,13 +97,13 @@ type getProductCategoryResponse struct {
 func (h *Handler) getProductCategory(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid warehouse id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
 		return
 	}
 
 	categoryID, err := uuid.Parse(c.Param("categoryID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid category id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid category id")
 		return
 	}
 
@@ -131,12 +130,12 @@ func (h *Handler) getProductCategory(c *gin.Context) {
 func (h *Handler) deleteProductCategory(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid warehouse id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
 		return
 	}
 	categoryID, err := uuid.Parse(c.Param("categoryID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid category id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid category id")
 		return
 	}
 
@@ -163,17 +162,16 @@ type createProductResponse struct {
 // @Security ApiKeyAuth
 // @Router /api/v1/warehouse/{warehouseID}/category/{categoryID}/product/ [post]
 func (h *Handler) createProduct(c *gin.Context) {
-	_, err := uuid.Parse(c.Param("warehouseID")) // TODO
+	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid warehouse id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
 		return
 	}
 	categoryID, err := uuid.Parse(c.Param("categoryID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid category id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid category id")
 		return
 	}
-	logrus.Info(categoryID)
 
 	var input req.Product
 	if err := c.BindJSON(&input); err != nil {
@@ -182,7 +180,7 @@ func (h *Handler) createProduct(c *gin.Context) {
 	}
 	input.CategoryID = categoryID
 
-	productID, err := h.services.CreateProduct(&input)
+	productID, err := h.services.CreateProduct(&input, warehouseID)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -213,12 +211,12 @@ type getProductsResponse struct {
 func (h *Handler) getProducts(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid warehouse id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
 		return
 	}
 	categoryID, err := uuid.Parse(c.Param("categoryID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid category id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid category id")
 		return
 	}
 
@@ -246,21 +244,21 @@ type getProductResponse struct {
 // @Param categoryID path string true "Category ID"
 // @Param productID path string true "Product ID"
 // @Security ApiKeyAuth
-// @Router /api/v1/warehouse/{warehouseID}/category/{categoryID}product/{productID} [get]
+// @Router /api/v1/warehouse/{warehouseID}/category/{categoryID}/product/{productID}/ [get]
 func (h *Handler) getProduct(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid warehouse id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
 		return
 	}
 	categoryID, err := uuid.Parse(c.Param("categoryID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid category id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid category id")
 		return
 	}
 	productID, err := uuid.Parse(c.Param("productID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid product id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid product id")
 		return
 	}
 
@@ -288,17 +286,17 @@ func (h *Handler) getProduct(c *gin.Context) {
 func (h *Handler) deleteProduct(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid warehouse id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
 		return
 	}
 	categoryID, err := uuid.Parse(c.Param("categoryID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid category id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid category id")
 		return
 	}
 	productID, err := uuid.Parse(c.Param("productID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid product id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid product id")
 		return
 	}
 
