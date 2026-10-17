@@ -59,16 +59,19 @@ func (h *Handler) InitRoutes() *gin.Engine {
 				}
 			}
 		}
-	}
-	supplier := apiV1.Group("/supplier")
-	{
-		supplier.GET("/:supplierID")
-	}
-	supply := apiV1.Group("/supply")
-	{
-		supply.POST("/")
-		supply.GET("/")
-		supply.GET("/:supplyID")
+		supplier := wareHouse.Group("/:warehouseID/supplier")
+		{
+			supplier.POST("/", h.createSupplier)
+			supplier.GET("/", h.getSuppliers)
+			supplier.GET("/:supplierID", h.getSupplier)
+			supplier.DELETE("/:supplierID", h.deleteSupplier)
+			supply := supplier.Group("/:supplierID/supply")
+			{
+				supply.POST("/")
+				supply.GET("/")
+				supply.GET("/:supplyID")
+			}
+		}
 	}
 	order := apiV1.Group("/order")
 	{
