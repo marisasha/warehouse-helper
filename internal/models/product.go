@@ -57,20 +57,16 @@ type Product struct {
 }
 
 type Batch struct {
-	ID           uuid.UUID       `json:"id"`
-	WarehouseID  uuid.UUID       `json:"warehouse_id"`
-	ProductID    uuid.UUID       `json:"product_id"`
-	SupplyItemID uuid.UUID       `json:"supply_item_id"`
-	Quantity     float64         `json:"quantity"`
-	Remaining    float64         `json:"remaining"`
-	CostPerUnit  decimal.Decimal `json:"cost_per_unit"`
-	HarvestDate  *time.Time      `json:"harvest_date,omitempty"`
-	ExpiryDate   *time.Time      `json:"expiry_date,omitempty"`
-	ReceivedAt   time.Time       `json:"received_at"`
-	Status       BatchStatus     `json:"status"`
+	ID          uuid.UUID       `json:"id"`
+	ProductID   uuid.UUID       `json:"product_id"`
+	Quantity    float64         `json:"quantity"`
+	Remaining   float64         `json:"remaining"`
+	CostPerUnit decimal.Decimal `json:"cost_per_unit"`
+	HarvestDate *time.Time      `json:"harvest_date,omitempty"`
+	ExpiryDate  *time.Time      `json:"expiry_date,omitempty"`
+	ReceivedAt  time.Time       `json:"received_at"`
+	Status      BatchStatus     `json:"status"`
 
 	// Связи
-	Warehouse  Warehouse   `gorm:"foreignKey:WarehouseID" json:"-"`
-	Product    Product     `gorm:"foreignKey:ProductID" json:"product"`
-	SupplyItem *SupplyItem `gorm:"foreignKey:SupplyItemID" json:"-"`
+	Product Product `gorm:"foreignKey:ProductID" json:"product"`
 }
