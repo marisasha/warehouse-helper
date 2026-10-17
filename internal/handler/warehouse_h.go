@@ -150,9 +150,9 @@ func (h *Handler) getWarehouseEmployee(c *gin.Context) {
 
 }
 
-// @Summary Просмотр сотрудника склада
+// @Summary Удаление сотрудника склада
 // @Tags warehouse
-// @Description Просмотр сотрудника склада по ID склада и ID сотрудника
+// @Description Удаление сотрудника склада по ID склада и ID сотрудника
 // @Accept json
 // @Produce json
 // @Param warehouseID path string true "Warehouse ID"
