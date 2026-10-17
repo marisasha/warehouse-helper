@@ -27,7 +27,7 @@ func (r *ProductDB) CreateProductCategory(input *req.ProductCategory) (uuid.UUID
 		Scan(&created)
 
 	if result.Error != nil {
-		return uuid.Nil, result.Error
+		return uuid.Nil, fmt.Errorf("error in repository: %s", result.Error)
 	}
 
 	return created.ID, nil
@@ -42,22 +42,22 @@ func (r *ProductDB) GetProductCategories(warehouseID uuid.UUID) ([]*models.Produ
 		Find(&categories)
 
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, fmt.Errorf("error in repository: %s", result.Error)
 	}
 
 	return categories, nil
 }
 
-func (r *ProductDB) GetProductCategory(warehouseID, categoryID uuid.UUID) (*models.ProductCategory, error) {
+func (r *ProductDB) GetProductCategoryData(warehouseID, categoryID uuid.UUID) (*models.ProductCategory, error) {
 	var category *models.ProductCategory
 
 	result := r.db.
 		Table(productCategoriesTable).
-		Where("warehouse_id = ? and id = ?", warehouseID, categoryID).
-		First(category)
+		Where("warehouse_id = ? AND id = ?", warehouseID, categoryID).
+		First(&category)
 
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, fmt.Errorf("error in repository: %s", result.Error)
 	}
 	if result.RowsAffected == 0 {
 		return nil, fmt.Errorf("Категория с id %s не найдена", categoryID)
@@ -65,15 +65,28 @@ func (r *ProductDB) GetProductCategory(warehouseID, categoryID uuid.UUID) (*mode
 
 	return category, nil
 }
+func (r *ProductDB) GetProductCategoryExist(warehouseID, categoryID uuid.UUID) (bool, error) {
+	var count int64
+
+	result := r.db.
+		Table(productCategoriesTable).
+		Where("warehouse_id = ? AND id = ?", warehouseID, categoryID).
+		Count(&count)
+
+	if result.Error != nil {
+		return false, fmt.Errorf("error in repository: %s", result.Error)
+	}
+	return count > 0, nil
+}
 
 func (r *ProductDB) DeleteProductCategory(warehouseID, categoryID uuid.UUID) error {
 	result := r.db.
 		Table(productCategoriesTable).
-		Where("warehouse_id = ? and id = ?", warehouseID, categoryID).
+		Where("warehouse_id = ? AND id = ?", warehouseID, categoryID).
 		Delete(nil)
 
 	if result.Error != nil {
-		return result.Error
+		return fmt.Errorf("error in repository: %s", result.Error)
 	}
 
 	return nil
@@ -89,32 +102,31 @@ func (r *ProductDB) CreateProduct(input *req.Product) (uuid.UUID, error) {
 		Scan(&created)
 
 	if result.Error != nil {
-		return uuid.Nil, result.Error
+		return uuid.Nil, fmt.Errorf("error in repository: %s", result.Error)
 	}
 
 	return created.ID, nil
 }
-func (r *ProductDB) GetProductsByCategory(warehouseID, categoryID uuid.UUID) ([]*models.Product, error) {
+func (r *ProductDB) GetProductsByCategory(categoryID uuid.UUID) ([]*models.Product, error) {
 	var products []*models.Product
-
 	result := r.db.
 		Table(productTable).
-		Where("warehouse_id = ? and category_id = ?", warehouseID, categoryID).
+		Where("category_id = ?", categoryID).
 		Find(&products)
 
 	if result.Error != nil {
-		return nil, result.Error
+		return nil, fmt.Errorf("error in repository: %s", result.Error)
 	}
 
 	return products, nil
 }
-func (r *ProductDB) GetProduct(warehouseID, categoryID, productID uuid.UUID) (*models.Product, error) {
+func (r *ProductDB) GetProduct(categoryID, productID uuid.UUID) (*models.Product, error) {
 	var product *models.Product
 
 	result := r.db.
-		Table(usersTable).
-		Where("warehouse_id = ? and category_id = ? and id = ?", warehouseID, categoryID, productID).
-		First(product)
+		Table(productTable).
+		Where("category_id = ? AND id = ?", categoryID, productID).
+		First(&product)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -122,14 +134,14 @@ func (r *ProductDB) GetProduct(warehouseID, categoryID, productID uuid.UUID) (*m
 
 	return product, nil
 }
-func (r *ProductDB) DeleteProduct(warehouseID, categoryID, productID uuid.UUID) error {
+func (r *ProductDB) DeleteProduct(categoryID, productID uuid.UUID) error {
 	result := r.db.
-		Table(usersTable).
-		Where("warehouse_id = ? and category_id = ? and id = ?", warehouseID, categoryID, productID).
+		Table(productTable).
+		Where("category_id = ? AND id = ?", categoryID, productID).
 		Delete(nil)
 
 	if result.Error != nil {
-		return result.Error
+		return fmt.Errorf("error in repository: %s", result.Error)
 	}
 	if result.RowsAffected == 0 {
 		return fmt.Errorf("Продукт с id %s не найден", productID)
