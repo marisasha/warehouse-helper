@@ -69,7 +69,7 @@ func (r *WarehouseDB) GetWarehouseEmployee(warehouseID, employeeID uuid.UUID) (*
 
 	result := r.db.
 		Table(warehouseEmployeesTable).
-		Where("warehouse_id = ? and id = ?", warehouseID, employeeID).
+		Where("warehouse_id = ? AND id = ?", warehouseID, employeeID).
 		First(&warehouseEmployees)
 
 	if result.Error != nil {
