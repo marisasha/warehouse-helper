@@ -5,7 +5,6 @@ import (
 	"github.com/marisasha/warehouse-helper/internal/app"
 	"github.com/marisasha/warehouse-helper/internal/config"
 
-	_ "github.com/marisasha/warehouse-helper/internal/docs"
 	"github.com/marisasha/warehouse-helper/internal/logger"
 	"github.com/sirupsen/logrus"
 )
