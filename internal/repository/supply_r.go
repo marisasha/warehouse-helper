@@ -59,6 +59,20 @@ func (r *SupplyDB) GetSupplier(warehouseID, supplierID uuid.UUID) (*models.Suppl
 	}
 	return supplier, nil
 }
+func (r *SupplyDB) GetSupplierExist(warehouseID, supplierID uuid.UUID) (bool, error) {
+	var count int64
+
+	result := r.db.
+		Table(supplierTable).
+		Where("warehouse_id = ? AND id = ?", warehouseID, supplierID).
+		Count(&count)
+
+	if result.Error != nil {
+		return false, fmt.Errorf("error in repository: %s", result.Error)
+	}
+	return count > 0, nil
+}
+
 func (r *SupplyDB) DeleteSupplier(warehouseID, supplierID uuid.UUID) error {
 	result := r.db.
 		Table(supplierTable).
@@ -73,4 +87,34 @@ func (r *SupplyDB) DeleteSupplier(warehouseID, supplierID uuid.UUID) error {
 	}
 
 	return nil
+}
+
+func (r *SupplyDB) CreateSupply(input *req.Supply) (uuid.UUID, error) {
+	var created *models.Supply
+
+	result := r.db.
+		Table(supplyTable).
+		Clauses(clause.Returning{}).
+		Create(input).
+		Scan(&created)
+
+	if result.Error != nil {
+		return uuid.Nil, fmt.Errorf("error in repository: %s", result.Error)
+	}
+
+	return created.ID, nil
+}
+
+func (r *SupplyDB) GetEmployeeExist(warehouseID uuid.UUID, userID uint64) (bool, error) {
+	var count int64
+
+	result := r.db.
+		Table(warehouseEmployeesTable).
+		Where("warehouse_id = ? AND user_id = ?", warehouseID, userID).
+		Count(&count)
+
+	if result.Error != nil {
+		return false, fmt.Errorf("error in repository: %s", result.Error)
+	}
+	return count > 0, nil
 }

@@ -25,7 +25,7 @@ type createSupplierResponse struct {
 func (h *Handler) createSupplier(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid warehouse id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
 		return
 	}
 	var input req.Supplier
@@ -65,7 +65,7 @@ type getSuppliersResponse struct {
 func (h *Handler) getSuppliers(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid warehouse id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
 		return
 	}
 
@@ -96,12 +96,12 @@ type getSupplierResponse struct {
 func (h *Handler) getSupplier(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid warehouse id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: nvalid warehouse id")
 		return
 	}
 	supplierID, err := uuid.Parse(c.Param("supplierID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadGateway, "invalid employee id")
+		newErrorResponse(c, http.StatusBadGateway, "error in handler: invalid supplier id")
 		return
 	}
 
@@ -129,12 +129,12 @@ func (h *Handler) getSupplier(c *gin.Context) {
 func (h *Handler) deleteSupplier(c *gin.Context) {
 	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "invalid warehouse id")
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
 		return
 	}
 	supplierID, err := uuid.Parse(c.Param("supplierID"))
 	if err != nil {
-		newErrorResponse(c, http.StatusBadGateway, "invalid employee id")
+		newErrorResponse(c, http.StatusBadGateway, "error in handler: invalid supplier id")
 		return
 	}
 
@@ -146,4 +146,56 @@ func (h *Handler) deleteSupplier(c *gin.Context) {
 
 	c.Status(http.StatusNoContent)
 
+}
+
+type createSupplyResponse struct {
+	Data map[string]uuid.UUID `json:"data"`
+}
+
+// @Summary Создание поставки для склада
+// @Tags supply
+// @Description Создание поставка по id склада и id поставщика
+// @Accept json
+// @Produce json
+// @Param warehouseID path string true "Warehouse ID"
+// @Param supplierID path string true "Supplier ID"
+// @Param input body request.Supply true "Данные для поставки"
+// @Security ApiKeyAuth
+// @Router /api/v1/warehouse/{warehouseID}/supplier/{supplierID}/supply/ [post]
+func (h *Handler) createSupply(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
+	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
+		return
+	}
+	supplierID, err := uuid.Parse(c.Param("supplierID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid supplier id")
+		return
+	}
+	var input req.Supply
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	input.SupplierID = supplierID
+	input.CreatorID = userId
+
+	supplyID, err := h.services.CreateSupply(&input, warehouseID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	data := map[string]uuid.UUID{
+		"supplyID": supplyID,
+	}
+	c.JSON(http.StatusAccepted, createSupplyResponse{
+		Data: data,
+	})
 }

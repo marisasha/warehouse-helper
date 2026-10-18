@@ -10,7 +10,7 @@ import (
 type Authorization interface {
 	CreateUser(user *req.User) (uint64, error)
 	GenerateToken(username, password string) (string, error)
-	ParseToken(token *string) (int, error)
+	ParseToken(token *string) (uint64, error)
 }
 type Warehouse interface {
 	GetWarehouseDetail(warehouseID *uuid.UUID) (*models.Warehouse, error)
@@ -37,6 +37,8 @@ type Supply interface {
 	GetSuppliers(warehouseID uuid.UUID) ([]*models.Supplier, error)
 	GetSupplier(warehouseID, supplierID uuid.UUID) (*models.Supplier, error)
 	DeleteSupplier(warehouseID, supplierID uuid.UUID) error
+
+	CreateSupply(input *req.Supply, warehouseID uuid.UUID) (uuid.UUID, error)
 }
 type Service struct {
 	Authorization

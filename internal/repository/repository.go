@@ -36,7 +36,12 @@ type Supply interface {
 	CreateSupplier(input *req.Supplier) (uuid.UUID, error)
 	GetSuppliers(warehouseID uuid.UUID) ([]*models.Supplier, error)
 	GetSupplier(warehouseID, supplierID uuid.UUID) (*models.Supplier, error)
+	GetSupplierExist(warehouseID, supplierID uuid.UUID) (bool, error)
 	DeleteSupplier(warehouseID, supplierID uuid.UUID) error
+
+	CreateSupply(input *req.Supply) (uuid.UUID, error)
+
+	GetEmployeeExist(warehouseID uuid.UUID, userID uint64) (bool, error)
 }
 type Repository struct {
 	Authorization

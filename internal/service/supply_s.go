@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 	req "github.com/marisasha/warehouse-helper/internal/dto/request"
 	"github.com/marisasha/warehouse-helper/internal/models"
@@ -31,4 +33,25 @@ func (s *SupplyService) GetSupplier(warehouseID, supplierID uuid.UUID) (*models.
 
 func (s *SupplyService) DeleteSupplier(warehouseID, supplierID uuid.UUID) error {
 	return s.repos.DeleteSupplier(warehouseID, supplierID)
+}
+
+func (s *SupplyService) CreateSupply(input *req.Supply, warehouseID uuid.UUID) (uuid.UUID, error) {
+
+	isSupplierInWarehouse, err := s.repos.GetEmployeeExist(warehouseID, input.CreatorID)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	if !isSupplierInWarehouse {
+		return uuid.Nil, fmt.Errorf("error in service: Не существует поставщика %s с warehouseID %s", input.SupplierID, warehouseID)
+	}
+
+	isUserWarehousesEmployee, err := s.repos.GetEmployeeExist(warehouseID, input.CreatorID)
+	if err != nil {
+		return uuid.Nil, err
+	}
+	if !isUserWarehousesEmployee {
+		return uuid.Nil, fmt.Errorf("error in service: Пользователь %s не является сотрудником склада с id %s", input.CreatorID, warehouseID)
+	}
+
+	return s.repos.CreateSupply(input)
 }
