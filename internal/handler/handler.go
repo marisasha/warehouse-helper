@@ -65,9 +65,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			supplier.GET("/", h.getSuppliers)
 			supplier.GET("/:supplierID", h.getSupplier)
 			supplier.DELETE("/:supplierID", h.deleteSupplier)
-			supply := supplier.Group("/:supplierID/supply")
+			supply := supplier.Group("/:supplierID/supply", h.userIdentity)
 			{
-				supply.POST("/")
+				supply.POST("/", h.createSupply)
 				supply.GET("/")
 				supply.GET("/:supplyID")
 			}
