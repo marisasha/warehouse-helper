@@ -36,7 +36,7 @@ type Argon2id struct {
 // приватные структуры
 type tokenClaims struct {
 	jwt.StandardClaims
-	UserId int `json:"user_id"`
+	UserId uint64 `json:"user_id"`
 }
 
 func NewAuthService(repos repository.Authorization, cfg Argon2id) *AuthService {
@@ -89,14 +89,14 @@ func (s *AuthService) CreateUser(user *req.User) (uint64, error) {
 	return userID, nil
 }
 
-func (s *AuthService) GenerateToken(username, password string) (string, error) {
-	userId, userPasswordHash, err := s.repos.GetUser(username)
+func (s *AuthService) GenerateToken(email, password string) (string, error) {
+	userId, userPasswordHash, err := s.repos.GetUser(email)
 	if err != nil {
 		return "", err
 	}
 	match, err := s.comparePasswordAndHash(password, userPasswordHash)
 	if err != nil || !match {
-		return "", errors.New("invalid username or password")
+		return "", errors.New("invalid email or password")
 	}
 	tokenTTL := time.Duration(s.cfg.TokenTTL) * time.Second
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &tokenClaims{
@@ -104,13 +104,13 @@ func (s *AuthService) GenerateToken(username, password string) (string, error) {
 			ExpiresAt: time.Now().Add(tokenTTL).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		int(userId),
+		uint64(userId),
 	})
 
 	return token.SignedString([]byte(s.cfg.SigningKey))
 }
 
-func (s *AuthService) ParseToken(accesToken *string) (int, error) {
+func (s *AuthService) ParseToken(accesToken *string) (uint64, error) {
 	token, err := jwt.ParseWithClaims(*accesToken, &tokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("invalid signing method")
