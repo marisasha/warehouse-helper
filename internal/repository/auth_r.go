@@ -46,5 +46,5 @@ func (r *AuthDB) GetUser(email string) (uint64, string, error) {
 		Where("email = ?", email).
 		First(&user).Error
 
-	return user.ID, user.Password, err
+	return user.ID, user.PasswordHash, err
 }
