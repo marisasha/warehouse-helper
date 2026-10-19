@@ -29,3 +29,8 @@ type Supply struct {
 	AcceptedAt *time.Time `json:"-"`
 	CreatedAt  time.Time  `json:"-"`
 }
+
+type SupplyStatus struct {
+	Status        string `json:"status"`
+	LastUpdatorID uint64 `json:"-"`
+}
