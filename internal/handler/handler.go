@@ -68,6 +68,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			supply := supplier.Group("/:supplierID/supply", h.userIdentity)
 			{
 				supply.POST("/", h.createSupply)
+				supply.PATCH("/:supplyID", h.updateSupplyStatus)
 				supply.GET("/")
 				supply.GET("/:supplyID")
 			}

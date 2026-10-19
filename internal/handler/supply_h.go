@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	req "github.com/marisasha/warehouse-helper/internal/dto/request"
+	res "github.com/marisasha/warehouse-helper/internal/dto/response"
 	"github.com/marisasha/warehouse-helper/internal/models"
 )
 
@@ -198,4 +199,57 @@ func (h *Handler) createSupply(c *gin.Context) {
 	c.JSON(http.StatusAccepted, createSupplyResponse{
 		Data: data,
 	})
+}
+
+type updateSupplyStatusResponse struct {
+	Data *res.UpdateSupplyStatus `json:"data"`
+}
+
+// @Summary Создание поставки для склада
+// @Tags supply
+// @Description Создание поставка по id склада и id поставщика
+// @Accept json
+// @Produce json
+// @Param warehouseID path string true "Warehouse ID"
+// @Param supplierID path string true "Supplier ID"
+// @Param supplyID path string true "Supply ID"
+// @Param input body request.SupplyStatus true "Новый статус поставки"
+// @Security ApiKeyAuth
+// @Router /api/v1/warehouse/{warehouseID}/supplier/{supplierID}/supply/ [post]
+func (h *Handler) updateSupplyStatus(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		return
+	}
+	warehouseID, err := uuid.Parse(c.Param("warehouseID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid warehouse id")
+		return
+	}
+	supplierID, err := uuid.Parse(c.Param("supplierID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid supplier id")
+		return
+	}
+	supplyID, err := uuid.Parse(c.Param("supplyID"))
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, "error in handler: invalid supply id")
+		return
+	}
+	var input req.SupplyStatus
+	if err := c.BindJSON(&input); err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
+	}
+	input.LastUpdatorID = userId
+
+	data, err := h.services.UpdateSupplyStatus(&input, warehouseID, supplierID, supplyID)
+	if err != nil {
+		newErrorResponse(c, http.StatusBadRequest, err.Error())
+	}
+
+	c.JSON(http.StatusAccepted, updateSupplyStatusResponse{
+		Data: data,
+	})
+
 }

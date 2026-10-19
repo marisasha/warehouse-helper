@@ -118,3 +118,23 @@ func (r *SupplyDB) GetEmployeeExist(warehouseID uuid.UUID, userID uint64) (bool,
 	}
 	return count > 0, nil
 }
+
+func (r *SupplyDB) UpdateStatus(input *req.SupplyStatus, supplyID uuid.UUID) (*models.Supply, error) {
+	var supply *models.Supply
+
+	result := r.db.
+		Table(supplyTable).
+		Clauses(clause.Returning{}).
+		Where("id = ?", supplyID).
+		Updates(map[string]any{
+			"status":          input.Status,
+			"last_updator_id": input.LastUpdatorID,
+		}).
+		Scan(&supply)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("error in repository: %s", result.Error)
+	}
+
+	return supply, nil
+}

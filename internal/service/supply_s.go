@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	req "github.com/marisasha/warehouse-helper/internal/dto/request"
+	res "github.com/marisasha/warehouse-helper/internal/dto/response"
 	"github.com/marisasha/warehouse-helper/internal/models"
 	"github.com/marisasha/warehouse-helper/internal/repository"
 )
@@ -54,4 +55,29 @@ func (s *SupplyService) CreateSupply(input *req.Supply, warehouseID uuid.UUID) (
 	}
 
 	return s.repos.CreateSupply(input)
+}
+
+func (s *SupplyService) UpdateSupplyStatus(input *req.SupplyStatus, warehouseID, supplierID, supplyID uuid.UUID) (*res.UpdateSupplyStatus, error) {
+	if input.Status == "accepted" {
+		supply, err := s.repos.UpdateStatus(input, supplyID)
+		if err != nil {
+			return nil, err
+		}
+		// batchID, err := s.repos.CreateBatch(supply) TODO
+		return &res.UpdateSupplyStatus{
+			NewStatus: supply.Status,
+		}, nil
+	}
+	if input.Status == "cancelled" {
+		supply, err := s.repos.UpdateStatus(input, supplyID)
+		if err != nil {
+			return nil, err
+		}
+		return &res.UpdateSupplyStatus{
+			NewStatus: supply.Status,
+		}, nil
+	}
+
+	return nil, fmt.Errorf("error in service: Непподдерживаемый: %s", input.Status)
+
 }

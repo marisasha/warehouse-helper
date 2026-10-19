@@ -40,8 +40,8 @@ type Supply interface {
 	DeleteSupplier(warehouseID, supplierID uuid.UUID) error
 
 	CreateSupply(input *req.Supply) (uuid.UUID, error)
-
 	GetEmployeeExist(warehouseID uuid.UUID, userID uint64) (bool, error)
+	UpdateStatus(input *req.SupplyStatus, supplyID uuid.UUID) (*models.Supply, error)
 }
 type Repository struct {
 	Authorization
