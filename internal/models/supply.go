@@ -30,19 +30,20 @@ type Supplier struct {
 }
 
 type Supply struct {
-	ID         uuid.UUID    `json:"id"`
-	SupplierID uuid.UUID    `json:"supplier_id"`
-	ProductID  uuid.UUID    `json:"product_id"`
-	CreatorID  uint         `json:"creator_id"`
-	Status     SupplyStatus `json:"status"`
-	Comment    *string      `json:"comment,omitempty"`
+	ID            uuid.UUID    `json:"id"`
+	SupplierID    uuid.UUID    `json:"supplier_id"`
+	ProductID     uuid.UUID    `json:"product_id"`
+	CreatorID     uint64       `json:"creator_id"`
+	LastUpdatorID *uint64      `json:"last_updator_id"`
+	Status        SupplyStatus `json:"status"`
+	Comment       *string      `json:"comment,omitempty"`
 
 	Quantity    float64         `json:"quantity"`
 	CostPerUnit decimal.Decimal `json:"cost_per_unit"`
 	HarvestDate *time.Time      `json:"harvest_date,omitempty"`
 	ExpiryDate  *time.Time      `json:"expiry_date,omitempty"`
 
-	AcceptedAt *time.Time `json:"accepted_at,omitempty"`
+	ReceivedAt *time.Time `json:"accepted_at,omitempty"`
 	CreatedAt  time.Time  `json:"created_at"`
 
 	// Связи
