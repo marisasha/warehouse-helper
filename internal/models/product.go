@@ -9,7 +9,6 @@ import (
 
 type ProductCategoryType string
 type ProductUnit string
-type BatchStatus string
 
 const (
 	TypeVegetables ProductCategoryType = "vegetables"
@@ -21,11 +20,6 @@ const (
 	UnitPcs   ProductUnit = "pcs"
 	UnitBox   ProductUnit = "box"
 	UnitLiter ProductUnit = "liter"
-)
-const (
-	BatchActive     BatchStatus = "active"
-	BatchExpired    BatchStatus = "expired"
-	BatchWrittenOff BatchStatus = "written_off"
 )
 
 type ProductCategory struct {
@@ -65,7 +59,6 @@ type Batch struct {
 	HarvestDate *time.Time      `json:"harvest_date,omitempty"`
 	ExpiryDate  *time.Time      `json:"expiry_date,omitempty"`
 	ReceivedAt  time.Time       `json:"received_at"`
-	Status      BatchStatus     `json:"status"`
 
 	// Связи
 	Product Product `gorm:"foreignKey:ProductID" json:"product"`
