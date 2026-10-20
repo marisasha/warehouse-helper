@@ -215,7 +215,7 @@ type updateSupplyStatusResponse struct {
 // @Param supplyID path string true "Supply ID"
 // @Param input body request.SupplyStatus true "Новый статус поставки"
 // @Security ApiKeyAuth
-// @Router /api/v1/warehouse/{warehouseID}/supplier/{supplierID}/supply/ [post]
+// @Router /api/v1/warehouse/{warehouseID}/supplier/{supplierID}/supply/{supplyID} [patch]
 func (h *Handler) updateSupplyStatus(c *gin.Context) {
 	userId, err := getUserId(c)
 	if err != nil {
@@ -243,9 +243,10 @@ func (h *Handler) updateSupplyStatus(c *gin.Context) {
 	}
 	input.LastUpdatorID = userId
 
-	data, err := h.services.UpdateSupplyStatus(&input, warehouseID, supplierID, supplyID)
+	data, err := h.services.UpdateSupplyStatus(c.Request.Context(), &input, warehouseID, supplierID, supplyID)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusAccepted, updateSupplyStatusResponse{
