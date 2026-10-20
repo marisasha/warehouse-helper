@@ -7,5 +7,5 @@ import (
 
 type UpdateSupplyStatus struct {
 	NewStatus models.SupplyStatus `json:"new_status"`
-	BatchID   *uuid.UUID          `json:"batch_id"`
+	BatchID   uuid.UUID           `json:"batch_id"`
 }
