@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -57,19 +58,20 @@ func (s *SupplyService) CreateSupply(input *req.Supply, warehouseID uuid.UUID) (
 	return s.repos.CreateSupply(input)
 }
 
-func (s *SupplyService) UpdateSupplyStatus(input *req.SupplyStatus, warehouseID, supplierID, supplyID uuid.UUID) (*res.UpdateSupplyStatus, error) {
+func (s *SupplyService) UpdateSupplyStatus(ctx context.Context, input *req.SupplyStatus, warehouseID, supplierID, supplyID uuid.UUID) (*res.UpdateSupplyStatus, error) {
 	if input.Status == "accepted" {
-		supply, err := s.repos.UpdateStatus(input, supplyID)
+		supply, err := s.repos.UpdateStatus(ctx, input, supplyID)
 		if err != nil {
 			return nil, err
 		}
-		// batchID, err := s.repos.CreateBatch(supply) TODO
+		batchID, err := s.repos.CreateBatch(ctx, supply)
 		return &res.UpdateSupplyStatus{
 			NewStatus: supply.Status,
+			BatchID:   batchID,
 		}, nil
 	}
 	if input.Status == "cancelled" {
-		supply, err := s.repos.UpdateStatus(input, supplyID)
+		supply, err := s.repos.UpdateStatus(ctx, input, supplyID)
 		if err != nil {
 			return nil, err
 		}
@@ -78,6 +80,6 @@ func (s *SupplyService) UpdateSupplyStatus(input *req.SupplyStatus, warehouseID,
 		}, nil
 	}
 
-	return nil, fmt.Errorf("error in service: Непподдерживаемый: %s", input.Status)
+	return nil, fmt.Errorf("error in service: Непподдерживаемый статус: %s", input.Status)
 
 }

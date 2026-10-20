@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 	req "github.com/marisasha/warehouse-helper/internal/dto/request"
 	"github.com/marisasha/warehouse-helper/internal/models"
@@ -41,7 +43,8 @@ type Supply interface {
 
 	CreateSupply(input *req.Supply) (uuid.UUID, error)
 	GetEmployeeExist(warehouseID uuid.UUID, userID uint64) (bool, error)
-	UpdateStatus(input *req.SupplyStatus, supplyID uuid.UUID) (*models.Supply, error)
+	UpdateStatus(ctx context.Context, input *req.SupplyStatus, supplyID uuid.UUID) (*models.Supply, error)
+	CreateBatch(ctx context.Context, supply *models.Supply) (uuid.UUID, error)
 }
 type Repository struct {
 	Authorization

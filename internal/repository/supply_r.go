@@ -1,7 +1,9 @@
 package repository
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	req "github.com/marisasha/warehouse-helper/internal/dto/request"
@@ -119,22 +121,60 @@ func (r *SupplyDB) GetEmployeeExist(warehouseID uuid.UUID, userID uint64) (bool,
 	return count > 0, nil
 }
 
-func (r *SupplyDB) UpdateStatus(input *req.SupplyStatus, supplyID uuid.UUID) (*models.Supply, error) {
+func (r *SupplyDB) UpdateStatus(ctx context.Context, input *req.SupplyStatus, supplyID uuid.UUID) (*models.Supply, error) {
+
 	var supply *models.Supply
 
-	result := r.db.
+	if err := r.db.WithContext(ctx).
 		Table(supplyTable).
-		Clauses(clause.Returning{}).
+		Where("id = ?", supplyID).
+		First(supply).Error; err != nil {
+		return nil, fmt.Errorf("error in repository: %s", err)
+	}
+
+	if supply.Status != models.SupplyDraft {
+		return nil, fmt.Errorf("error in repository: можно обновить поставку только со статусом draft, текущий статус: %s", supply.Status)
+	}
+
+	result := r.db.
+		WithContext(ctx).
+		Table(supplyTable).
 		Where("id = ?", supplyID).
 		Updates(map[string]any{
 			"status":          input.Status,
 			"last_updator_id": input.LastUpdatorID,
-		}).
-		Scan(&supply)
+		})
 
 	if result.Error != nil {
 		return nil, fmt.Errorf("error in repository: %s", result.Error)
 	}
+	if result.RowsAffected == 0 {
+		return nil, gorm.ErrRecordNotFound
+	}
 
 	return supply, nil
+}
+
+func (r *SupplyDB) CreateBatch(ctx context.Context, supply *models.Supply) (uuid.UUID, error) {
+	created := models.Batch{
+		ID:          uuid.New(),
+		ProductID:   supply.ProductID,
+		Quantity:    supply.Quantity,
+		Remaining:   supply.Quantity,
+		CostPerUnit: supply.CostPerUnit,
+		HarvestDate: supply.HarvestDate,
+		ExpiryDate:  supply.ExpiryDate,
+		ReceivedAt:  time.Now(),
+	}
+
+	result := r.db.
+		WithContext(ctx).
+		Table(batchesTable).
+		Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}}}).
+		Create(&created)
+
+	if result.Error != nil {
+		return uuid.Nil, fmt.Errorf("error in repository: %s", result.Error)
+	}
+	return created.ID, nil
 }

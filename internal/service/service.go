@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 	req "github.com/marisasha/warehouse-helper/internal/dto/request"
 	res "github.com/marisasha/warehouse-helper/internal/dto/response"
@@ -40,7 +42,7 @@ type Supply interface {
 	DeleteSupplier(warehouseID, supplierID uuid.UUID) error
 
 	CreateSupply(input *req.Supply, warehouseID uuid.UUID) (uuid.UUID, error)
-	UpdateSupplyStatus(input *req.SupplyStatus, warehouseID, supplierID, supplyID uuid.UUID) (*res.UpdateSupplyStatus, error)
+	UpdateSupplyStatus(ctx context.Context, input *req.SupplyStatus, warehouseID, supplierID, supplyID uuid.UUID) (*res.UpdateSupplyStatus, error)
 }
 type Service struct {
 	Authorization
